@@ -9,6 +9,9 @@ extends Character
 export var canIdle := true
 export var canFall := true
 
+#var canWallJump := true
+var canTurn := true
+
 export var fastFallSpeed := 600.0
 
 #var velocity := Vector2()
@@ -56,6 +59,10 @@ var onWall := false
 func _ready():
 	pass
 
+func _process(delta):
+	if Input.is_action_just_pressed("restart"):
+        get_tree().reload_current_scene()
+
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _physics_process(delta):
 	print(velocity.y)
@@ -65,11 +72,12 @@ func _physics_process(delta):
 	velocity.y += gravity*delta
 	
 	var onFloor = is_on_floor()
-	
+	if onFloor: canTurn = true
 	#Just touched wall
 	var touchedWall = is_on_wall()
 	if !onWall and touchedWall:
 		onWall = true
+		canTurn = true
 		if !onFloor:
 			velocity.y = min(velocity.y, 0.0)
 	#Just left wall
@@ -90,14 +98,14 @@ func _physics_process(delta):
 		#Use 1 for non-analog input
 		move += Input.get_action_strength("ui_right")
 		#sprite.flip_h = velocity.x < 0
-		sprite.flip_h = false
+		if canTurn: sprite.flip_h = false
 		if onFloor:
 			playAnim("run")
 	elif Input.is_action_pressed("ui_left"):
 		#Use 1 for non-analog input
 		move -= Input.get_action_strength("ui_left")
 		#sprite.flip_h = velocity.x < 0
-		sprite.flip_h = true
+		if canTurn: sprite.flip_h = true
 		if onFloor:
 			playAnim("run")
 	else:
@@ -113,10 +121,13 @@ func _physics_process(delta):
 			playAnim("jump")
 		#Wall jump
 		elif onWall:
+			canTurn = false
 			canFall = false
+			sprite.flip_h = !sprite.flip_h
 			playAnim("flip")
 			gravity = Utils.jumpGravity(jumpHeight,jumpTime)
 			velocity.y = Utils.jumpVeloctiy(gravity,jumpTime)#-2*jumpHeight/jumpTime
+			velocity.x = -runSpeed*move
 		
 	#falling animation
 	if !onFloor and !onWall:
@@ -141,7 +152,7 @@ func _physics_process(delta):
 	#movement calculations
 	var moveTimes = groundMvmtTime if onFloor else airMvmtTime
 	
-	var accelX : float
+	var accelX := 0.0
 	#Calculate acceleration
 	#Moving forward
 	if velocity.x * move >  0:
@@ -150,7 +161,7 @@ func _physics_process(delta):
 	elif move == 0:
 		accelX = runSpeed/moveTimes.decel
 	#Turning around
-	else:
+	else:#elif canTurn:
 		accelX = runSpeed/moveTimes.turn
 	#How fast player wants to go based on input
 	var targetSpeed = move*runSpeed
