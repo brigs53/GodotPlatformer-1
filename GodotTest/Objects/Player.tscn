@@ -229,6 +229,7 @@ groundMvmtTime = {
 "decel": 0.1,
 "turn": 0.3
 }
+wallJumpSpeed = 200.0
 wallSlide = {
 "accelTime": 1.0,
 "maxSpeed": 200

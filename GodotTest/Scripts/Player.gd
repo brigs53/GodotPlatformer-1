@@ -127,7 +127,7 @@ func _physics_process(delta):
 			playAnim("flip")
 			gravity = Utils.jumpGravity(jumpHeight,jumpTime)
 			velocity.y = Utils.jumpVeloctiy(gravity,jumpTime)#-2*jumpHeight/jumpTime
-			velocity.x = -runSpeed*move
+			velocity.x = -wallJumpSpeed*move
 		
 	#falling animation
 	if !onFloor and !onWall:
