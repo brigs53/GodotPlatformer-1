@@ -10,7 +10,7 @@ export var runSpeed1 : float = 220
 export var jumpHeight1 : float = 40
 export var jumpTime1 : float = 0.3
 
-#Saves the current state of the player and the state that the player will do next (after 1 tick).
+#Saves the current state of the player and the state that the player will do next (updates after each frame).
 export var PlayerState_Prev = ""
 export var PlayerState = ""
 export var PlayerState_Next = "Idle"
@@ -73,6 +73,8 @@ func _ready():
 func _physics_process(delta):
 	PlayerState_Prev = PlayerState
 	PlayerState = PlayerState_Next
+	
+	
 	#print(PlayerState)
 	move_mechanics(delta)
 	#print(is_on_floor())
