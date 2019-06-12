@@ -6,5 +6,5 @@ static func moveTowards(current:float, target:float, maxDelta:float):
 static func jumpGravity(jumpHeight:float,jumpTime:float):
 	return 2*jumpHeight/(jumpTime*jumpTime)
 
-static func jumpVeloctiy(gravity: float, jumpTime:float):
+static func jumpVelocity(gravity: float, jumpTime:float):
 	return -gravity*jumpTime
